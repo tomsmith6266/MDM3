@@ -55,7 +55,7 @@ while not car_park_full:
     if time_step < len(data_poisson) and data_poisson[time_step] == 1:
         queue.append(1)
 
-    if len(queue):
+    if len(queue) and road[0] == 0:
         add_car = True
         queue.pop()
     else:
@@ -70,7 +70,7 @@ while not car_park_full:
     if add_car and road[0] == 0:
 
         # We can add an if statement to give certain proportions of cars different behaviours
-        driver_type = random.choices([1, 2, 3], [0.4, 0.2, 0.4])[0]
+        driver_type = random.choices([1, 2, 3], [1, 0, 0])[0]
         if driver_type == 1:
             first_free_space(new_car - 1, 0)
         elif driver_type == 2:
