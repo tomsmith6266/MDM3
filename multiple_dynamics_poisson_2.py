@@ -29,6 +29,19 @@ def optimal_space(c, num_trips):
     desired_spaces[c] = np.arange((num_cars - opt_spaces), num_cars, 1, dtype=object)
 
 
+def eloy(c, curr_space):
+    people_in_front = 0
+    free_spaces = []
+    for i in range(curr_space, Capacity):
+        if spaces[i] == 0:
+            free_spaces.append(i)
+        if road[i] != 0:
+            people_in_front += 1
+    desired_spaces[c] = free_spaces[-people_in_front]
+    # give driver last index - people_in_front
+
+
+
 num_cars = Capacity  # arbitrary value for number of cars
 time_to_park = np.zeros(num_cars)  # keep track of time taken for each car to park
 spaces = np.zeros(num_cars)  # assuming there are enough spaces for cars
@@ -66,17 +79,18 @@ while not car_park_full:
         add_car = False
 
     # if the conditions are met to add a new car, add a new car and update identification number
-    # ADD CAR DEPENDENT ON JOE'S CODE!
     if add_car and road[0] == 0:
 
         # We can add an if statement to give certain proportions of cars different behaviours
-        driver_type = random.choices([1, 2, 3], [1, 0, 0])[0]
+        driver_type = random.choices([1, 2, 3, 4], [0, 0, 0, 1])[0]
         if driver_type == 1:
-            first_free_space(new_car - 1, 0)
+            first_free_space(new_car - 1, -1)
         elif driver_type == 2:
             optimal_space(new_car - 1, 0)
-        else:
+        elif driver_type == 3:
             random_space(new_car - 1, 0)
+        else:
+            eloy(new_car-1, 0)
 
         road[0] = new_car
 
@@ -117,6 +131,8 @@ while not car_park_full:
                     first_free_space(id_num - 1, space_num)
                 elif driver_type == 2:
                     optimal_space(id_num - 1, num_trips)
+                elif driver_type == 3:
+                    random_space(id_num - 1, space_num)
                 else:
                     random_space(id_num - 1, space_num)
 
@@ -135,6 +151,12 @@ while not car_park_full:
 
     car_park_full = np.all(spaces > 0)
 
-print(sum(time_to_park))
+print(spaces)
+print(time_to_park)
+plt.figure(1)
+plt.scatter(spaces, time_to_park)
+
+plt.figure(2)
+#print(sum(time_to_park))
 plt.plot(time_to_park)
 plt.show()
