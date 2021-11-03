@@ -95,9 +95,8 @@ while not car_park_full:
         id_num = live_cars[-1][0]
         driver_type = live_cars[-1][1]
         curr_space = 0
-        num_trips = live_cars[-1][2]
+        num_trips = 0
         choose_desired_spaces(id_num-1, driver_type, curr_space, num_trips)
-        #### CURRENTLY TRYING TO PASS AN ARRAY (EACH CAR) AS AN ARGUMENT
         queue.pop(0)
 
     # for every car on road, un-parked
