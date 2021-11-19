@@ -2,17 +2,16 @@ from scipy.stats import poisson
 import numpy as np
 
 
-def car_arrivals(Capacity):
+def car_arrivals(Capacity, arrival_time):
 
-    TPeriod = 2  # Arrival Time period (minutes)
-    Interval = 1  # Interval of time you want to measure the number of live_cars arriving (seconds)
+    TPeriod = (arrival_time*60)/2 # Arrival Time period (time steps)
+
 
     # Calculate the mean for the poisson distribution
-    TPeriod = TPeriod * 60
-    mean = Capacity / (TPeriod / Interval)
+    mean = Capacity / TPeriod
 
     # Start the poisson distribution
-    data_poisson = poisson.rvs(mu=mean, size=TPeriod)
+    data_poisson = poisson.rvs(mu=mean, size=int(TPeriod))
 
     # sink variable
     sink = 0

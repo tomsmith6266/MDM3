@@ -2,7 +2,7 @@ from scipy.stats import poisson
 import numpy as np
 
 # set variables
-Capacity = 50  # CarPark capacity
+Capacity = 10 # CarPark capacity
 TPeriod = 10  # Arrival Time period (minutes)
 Interval = 1  # Interval of time you want to measure the number of cars arriving (seconds)
 
@@ -33,7 +33,3 @@ if sum(data_poisson) < Capacity:
 while sum(data_poisson) > Capacity:
     data_poisson = np.delete(data_poisson, -1)
 
-# checking outcome is as expected
-print(data_poisson)
-print(sum(data_poisson))
-print(len(data_poisson))

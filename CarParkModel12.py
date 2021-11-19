@@ -2,7 +2,8 @@ import random
 import numpy as np
 
 
-def model(Capacity, data_poisson, ratio):
+def model(Capacity, data_poisson, ratio, end_zone, time_parking):
+
     # functions that determine behaviour of live_cars
     def first_free_space(c, curr_space):
         if spaces[curr_space] == 0:
@@ -20,8 +21,8 @@ def model(Capacity, data_poisson, ratio):
 
     def optimal_space(c, num_trips):
         # number of spaces from the end considered optimal (increases with number of full trips done)
-        opt_spaces = (num_cars // 20) + (num_cars // 20) * num_trips
-        desired_spaces[c] = np.arange((num_cars - opt_spaces), num_cars, 1, dtype=object)
+        opt_spaces = num_cars * end_zone + (num_cars * end_zone) * num_trips
+        desired_spaces[c] = np.arange((num_cars - opt_spaces), num_cars, 1, dtype = object)
 
     def eloy(c, curr_space):
         people_in_front = 0
@@ -54,6 +55,8 @@ def model(Capacity, data_poisson, ratio):
     spaces = np.zeros(num_cars)  # assuming there are enough spaces for live_cars
     road = np.zeros(num_cars)  # road is same length as no. parking spaces
 
+    flow_rate = []
+
     desired_spaces = [0] * num_cars  # each car has an array of spaces deemed acceptable to park in
     cars = []  # each car will be appended to an array of cars
     live_cars = []  # once cars are in the car park, they become live
@@ -67,6 +70,10 @@ def model(Capacity, data_poisson, ratio):
     add_car = True  # under certain circumstances a new car is allowed into the car park
 
     new_car = 0  # each car has its own identification number
+
+    time_save = []
+
+    road_save = np.array([])
 
     for i in range(0, Capacity):
         # We can add an if statement to give certain proportions of live_cars different behaviours
@@ -113,7 +120,7 @@ def model(Capacity, data_poisson, ratio):
             # if the space is taken decide on a new set of spaces and move on
             if np.any(desired_spaces[id_num - 1] == space_num):
                 if spaces[space_num] == 0:
-                    if parking_duration < 10:
+                    if parking_duration < time_parking:
                         car[3] += 1
                     else:
                         road[space_num] = 0
@@ -141,6 +148,19 @@ def model(Capacity, data_poisson, ratio):
 
         car_park_full = np.all(spaces > 0)
 
+        time_save.append(time_step)
+
+        if time_step > 1:
+            road_save = np.vstack([road_save,road])
+        else:
+            road_save = np.append(road_save,road,axis = 0)
+
+    for i in range(len(road_save[:,1])-1):
+        same = np.equal(road_save[i],road_save[i+1])
+        flow_rate = np.append(flow_rate,len(same)-np.count_nonzero(same))
+
+    flow_rate = np.average(flow_rate)
+
     avg_time_to_park = sum(time_to_park)/len(time_to_park)
 
-    return time_to_park, spaces, avg_time_to_park
+    return time_to_park, spaces, avg_time_to_park, time_save, road_save, flow_rate

@@ -24,7 +24,7 @@ def random_space(c, curr_space):
 
 def optimal_space(c, num_trips):
     # number of spaces from the end considered optimal (increases with number of full trips done)
-    opt_spaces = (num_cars // 20) + (num_cars // 20) * num_trips
+    opt_spaces = (num_cars * 0.05) + (num_cars * 0.05) * num_trips
     desired_spaces[c] = np.arange((num_cars - opt_spaces), num_cars, 1, dtype=object)
 
 
@@ -77,7 +77,7 @@ new_car = 0  # each car has its own identification number
 
 for i in range(0, Capacity):
     # We can add an if statement to give certain proportions of live_cars different behaviours
-    driver_type = random.choices([1, 2, 3, 4], [0, 1, 0, 0])[0]
+    driver_type = random.choices([1, 2, 3, 4], [0, 0, 0, 1])[0]
 
     # each car has an identification number, their driver type and the no. trips of the car park they have done
     cars.append([i + 1, driver_type, 0, 0])
@@ -86,7 +86,7 @@ for i in range(0, Capacity):
 while not car_park_full:
 
     print("Spaces:" + str(spaces))
-    print("Road:" + str(road))
+    print("Road:  " + str(road))
     # live_cars are added arrive at the car park according to a Poisson distribution
     # a queue will form if live_cars cannot go straight into the car park
     if time_step < len(data_poisson) and data_poisson[time_step] == 1:
@@ -122,7 +122,7 @@ while not car_park_full:
         # if the space is taken decide on a new set of spaces and move on
         if np.any(desired_spaces[id_num - 1] == space_num):
             if spaces[space_num] == 0:
-                if parking_duration < 6:
+                if parking_duration < 3:
                     car[3] += 1
                 else:
                     road[space_num] = 0
@@ -151,6 +151,8 @@ while not car_park_full:
 
     car_park_full = np.all(spaces > 0)
 
+print("Spaces:" + str(spaces))
+print("Road:  " + str(road))
 # plt.figure(1)
 # plt.scatter(spaces, time_to_park)
 # plt.title("Final spaces vs time taken to park")
@@ -159,10 +161,12 @@ while not car_park_full:
 # plt.plot(time_to_park)
 # plt.title("Time to park against id number")
 # plt.show()
+
+#A1 = ['\u2193','\u2193','\u2193','\u2193','\u2193','\u2193','\u2193','\u2193','\u2193','\u2193']
 #
-plt.figure(1)
-spaces_heatmap = spaces_heatmap.reshape((10,10))
-ax = sns.heatmap(spaces_heatmap, linewidth=0.5, xticklabels=False, yticklabels=False)
-plt.savefig('EndParking.png')
-plt.show()
+# plt.figure(1)
+# spaces_heatmap = spaces_heatmap.reshape((10,10))
+# ax = sns.heatmap(spaces_heatmap, yticklabels=A1, linewidth=0.5,  xticklabels=False)
+# plt.savefig('EloyParking.png')
+# plt.show()
 
